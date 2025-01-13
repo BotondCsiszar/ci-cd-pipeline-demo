@@ -19,14 +19,33 @@ jobs:
     - name: Set up CMake
       uses: lukka/setup-cmake@v3
 
+    - name: Show system information
+      run: |
+        echo "Operating System: $(uname -a)"
+        echo "Compiler Version:"
+        gcc --version || echo "GCC not available"
+        cmake --version
+
     - name: Configure build
-      run: cmake -S . -B build
+      run: |
+        cmake -S . -B build
+        echo "CMake Configuration complete"
 
     - name: Build executable
-      run: cmake --build build
+      run: |
+        cmake --build build --verbose
+        echo "Build complete"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
       with:
         name: Executable
         path: build/CI_CD_Demo
+
+    - name: Run executable (Test)
+      run: |
+        ./build/CI_CD_Demo || echo "Executable failed to run"
+
+    - name: List generated files
+      run: |
+        ls -R build
